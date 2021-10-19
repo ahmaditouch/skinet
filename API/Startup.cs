@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Helpers;
+using AutoMapper;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -31,12 +33,14 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             //L'ordre n'est pas important ici contrairement au middleware 
-            services.AddScoped<IProductRepository,ProductRepository>();
+            services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
-            services.AddDbContext<StoreContext>(x => 
-           // x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-            x.UseSqlite( "Data Source=skinet.db"));
-           
+            services.AddDbContext<StoreContext>(x =>
+            // x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+            x.UseSqlite("Data Source=skinet.db"));
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
@@ -46,7 +50,7 @@ namespace API
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment()) 
+            if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
@@ -56,6 +60,7 @@ namespace API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseStaticFiles();
 
             app.UseAuthorization();
 
