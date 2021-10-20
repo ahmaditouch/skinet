@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using API.Errors;
+using API.Extensions;
 using API.Helpers;
+using API.Middleware;
 using AutoMapper;
 using Core.Interfaces;
 using Infrastructure.Data;
@@ -32,31 +35,24 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //L'ordre n'est pas important ici contrairement au middleware 
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+            //L'ordre n'est pas important ici contrairement au middleware     
             services.AddAutoMapper(typeof(MappingProfiles));
             services.AddControllers();
             services.AddDbContext<StoreContext>(x =>
-            // x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
-            x.UseSqlite("Data Source=skinet.db"));
+            x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
+            // x.UseSqlite("Data Source=skinet.db"));
+            services.AddApplicationServices();
+            services.AddSwaggerDocumentation();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseSwaggerDocumentation();
 
+            app.UseStatusCodePagesWithReExecute("/errors/{0}"); // note errors controller 
             app.UseHttpsRedirection();
 
             app.UseRouting();
