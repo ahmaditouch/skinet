@@ -43,14 +43,13 @@ namespace API
             // x.UseSqlite("Data Source=skinet.db"));
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();
-            services.AddCors(opt =>
+         services.AddCors(opt =>
            {
                opt.AddPolicy("CorsPolicy", policy =>
                {
-                   policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                   policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
                });
            });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
