@@ -10,3 +10,4 @@ import { HomeComponent } from './home.component';
   exports: [HomeComponent]
 })
 export class HomeModule { }
+ 
