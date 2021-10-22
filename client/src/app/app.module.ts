@@ -1,12 +1,14 @@
+import { HomeModule } from './home/home.module';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { CoreModule } from './core/core.module';
 import { ShopModule } from './shop/shop.module';
+import { ErrorInterceptor } from './core/interceptors/error.interceptor';
 
 @NgModule({
   declarations: [
@@ -18,9 +20,12 @@ import { ShopModule } from './shop/shop.module';
     BrowserAnimationsModule,
     HttpClientModule,
     CoreModule,
-    ShopModule
+  //  ShopModule, note lazy loading 
+    HomeModule
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
