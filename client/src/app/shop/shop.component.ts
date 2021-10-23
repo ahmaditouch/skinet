@@ -11,7 +11,7 @@ import { ShopService } from './shop.service';
   styleUrls: ['./shop.component.scss']
 })
 export class ShopComponent implements OnInit {
-  @ViewChild('search', {static: true}) searchTerm: ElementRef;
+  @ViewChild('search', {static: false}) searchTerm: ElementRef;
   products: IProduct[];
   brands: IBrand[];
   types: IType[];
@@ -33,7 +33,7 @@ export class ShopComponent implements OnInit {
   
   getProducts() {
     this.shopService.getProducts(this.shopParams).subscribe(response => {
-      this.products = response!.data;
+      this.products = response!.data; // note possibly null
       this.shopParams.pageNumber = response!.pageIndex;
       this.shopParams.pageSize = response!.pageSize;
       this.totalCount = response!.count;
@@ -70,7 +70,7 @@ export class ShopComponent implements OnInit {
     this.getProducts();
   }
 
-  onSortSelected(event: Event) {
+ onSortSelected(event: Event) { // note event.target ne marche pas depuis le html
     
     this.shopParams.sort = (event.target as HTMLInputElement).value;
     this.getProducts();
