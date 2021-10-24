@@ -19,6 +19,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 namespace API
 {
@@ -41,15 +42,20 @@ namespace API
             services.AddDbContext<StoreContext>(x =>
             x.UseSqlite(_config.GetConnectionString("DefaultConnection")));
             // x.UseSqlite("Data Source=skinet.db"));
+             services.AddSingleton<IConnectionMultiplexer>(c =>
+            {
+                var configuration = ConfigurationOptions.Parse(_config.GetConnectionString("Redis"), true);
+                return ConnectionMultiplexer.Connect(configuration);
+            });
             services.AddApplicationServices();
             services.AddSwaggerDocumentation();
-         services.AddCors(opt =>
-           {
-               opt.AddPolicy("CorsPolicy", policy =>
-               {
-                   policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
-               });
-           });
+            services.AddCors(opt =>
+              {
+                  opt.AddPolicy("CorsPolicy", policy =>
+                  {
+                      policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200");
+                  });
+              });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
