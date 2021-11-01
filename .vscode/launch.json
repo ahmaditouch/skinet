@@ -14,6 +14,7 @@
             "args": [],
             "cwd": "${workspaceFolder}/API",
             "stopAtEntry": false,
+           
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
                 "action": "openExternally",
@@ -29,7 +30,9 @@
         {
             "name": ".NET Core Attach",
             "type": "coreclr",
-            "request": "attach"
-        }
+            "request": "attach",
+            "justMyCode": false // note pour debug
+        },
+        
     ]
 }
