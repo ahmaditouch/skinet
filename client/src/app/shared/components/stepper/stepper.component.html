@@ -10,6 +10,6 @@
         </li>
     </ul>
     <div>
-        <ng-container [ngTemplateOutlet]="selected.content"></ng-container>
+        <ng-container [ngTemplateOutlet]="selected?selected.content:null"></ng-container>
     </div>
 </div>
